@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- <img src="frank.jpg" alt="Frank Sinatra" > -->
+    <img src="nature.jpg" alt="Природа" >
+    <div id="main-board"></div>
+    <div id="board-for-pieces"></div>
+    <div id="board-clear"
+        ondragstart="pieceDragStart(event)"
+        ondragend="pieceDragEnd(event)"
+        onclick="boxClicked(event)">
+        
+    </div>
+
+    <div id='IBox'
+    style='background: yellow; width: 200px; height: 200px'
+    onclick="boxClicked(event)">
+</div>
+
+    <p style="font-size:45px">
+        координаты клика: <span id='IInfo'></span>
+    </p>
+
+
+
+    <script src="script.js">
+    </script>
+</body>
+</html>

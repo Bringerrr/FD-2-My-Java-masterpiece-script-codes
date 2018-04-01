@@ -1,0 +1,25 @@
+/* *{
+    box-sizing: border-box
+} */
+
+#main-board{
+    background-position: -75px -50px;
+    /* width: 25px; 
+    height: 25px; */
+    border: solid red 1px
+}
+
+#board-clear{
+    background:purple;
+    /* border: 10px solid black; */
+    margin-top:50px;
+}
+
+#board-for-pieces{
+    background:green;
+    /* border: 10px solid black; */
+}
+
+/* img{
+    display: none
+} */
