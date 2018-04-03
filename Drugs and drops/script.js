@@ -4,6 +4,11 @@ var boardClear = document.getElementById("board-clear");
 var picture = document.getElementsByTagName("img");
 var imgSrc = picture[0].src;
 
+var pieces = boardForPieces.getElementsByTagName("div");
+
+var piecesInPurple = boardClear.getElementsByTagName("div");
+
+
 
 var piecesCountX = 4, // Количество кусочков -------------
     piecesCountY = 4
@@ -44,7 +49,7 @@ boardForPieces.innerHTML = str;
 
 // Присваивание стилей блокам -------------
 
-var pieces = boardForPieces.getElementsByTagName("div")
+
 
 
 for(i=0; i<(piecesCountY*piecesCountX);i++){
@@ -93,6 +98,8 @@ for(i=0; i<(piecesCountY*piecesCountX);i++){
     pieces[i].addEventListener('dragstart',pieceDragStart,false);
     pieces[i].addEventListener('drop',pieceDragEnd,false);
     pieces[i].addEventListener('click',boxClicked,false); // Test
+    // pieces[i].addEventListener('dragover',divDragOver,false);
+
 }
 
 boardForPieces.addEventListener('dragover',divDragOver,false);
@@ -106,6 +113,7 @@ function pieceDragStart(EO) {
     EO=EO||window.event;
     console.log('starting drag id='+EO.currentTarget.id);
     draggedPiece=EO.currentTarget;
+    draggedPiece.style.zIndex="39";
 
             //Test
 
@@ -117,12 +125,15 @@ function pieceDragStart(EO) {
     var clickX=Math.round(EO.pageX-boxPos.left);
     var clickY=Math.round(EO.pageY-boxPos.top);
     infoObj.innerHTML="x="+clickX+" y="+clickY;
+    return clickX
 }
 
 function pieceDragEnd(EO) {
     // закончилось перетаскивание мячика (неважно куда он уронен)
     EO=EO||window.event;
     console.log('drag finished');
+    console.log(piecesInPurple)
+    
     draggedPiece=null;
 }
 
@@ -137,6 +148,10 @@ function divDrop(EO) {
     EO=EO||window.event;
     EO.preventDefault();
     if ( draggedPiece ){
+        // if (EO.currentTarget.id==15){
+        //     console.log("u got it!")
+        // }
+        console.log(EO.currentTarget.id)
         EO.currentTarget.appendChild(draggedPiece);
 
         console.log(EO.currentTarget);
@@ -148,7 +163,7 @@ function divDrop(EO) {
         var clickX=Math.round(EO.pageX);
         var clickY=Math.round(EO.pageY);
         infoObj.innerHTML="x="+clickX+" y="+clickY;
-
+        // console.log(getElementPos)
         draggedPiece.style.position="absolute";
         draggedPiece.style.top=clickY+"px";
         draggedPiece.style.left=clickX+"px";
