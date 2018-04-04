@@ -20,6 +20,12 @@
     /* border: 10px solid black; */
 }
 
+#test{
+    width: 36%;
+    height: 36%;
+    border: 7px solid #000;
+}
+
 /* img{
     display: none
 } */
