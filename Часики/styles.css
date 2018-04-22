@@ -1,0 +1,83 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+#roundBox{
+    left: 100px;
+    top: 100px;
+    width: 500px;
+    height: 500px;
+    background-color: greenyellow;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: relative;
+}
+
+#roundBox div{
+    background-color:red;
+    width: 9%;
+    height: 9%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+#roundBox div>span{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+#roundBoxCenter{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    width: 10%;
+    height: 10%;
+    border-radius: 50%;
+    background-color: black;
+}
+
+#clockSeconds{
+    display: block;
+    width: 170px;
+    height: 3px;
+    background-color: rgb(0, 84, 209);
+    z-index: 2;
+}
+
+#clockMinutes{
+    display: block;
+    width: 170px;
+    height: 3px;
+    background-color:orange;
+    z-index: 2;
+    border-radius: 5px;
+}
+
+#clockHours{
+    display: block;
+    width: 150px;
+    height: 7px;
+    background-color: white;
+    z-index: 2;
+    border-radius: 20px;
+}
+
+.center-for-pointer{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform-origin: 0% 50%;
+}
