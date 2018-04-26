@@ -3,14 +3,19 @@
 var circle = document.getElementById("roundBox");
 var circleCenter = document.getElementById("roundBoxCenter");
 
-var clockSeconds, clockMinutes, clockHours; // Стрелочки на циферблате 
+var clockMiliSeconds, clockSeconds, clockMinutes, clockHours; // Стрелочки на циферблате 
 
-var posSec, posMin, posHour; // Положения стрелочек
-var timer1, timer2, timer3; // Таймеры дял стрелочек
+var timeTable; 
 
-var degPerSecond = 6; // Разница между секундами в градусах (360/60)
-var kostyl = 15; // Пришлось прикрутить костыль, поскольку стрелки в положении rotation(0deg) указывают на красный кружочек "3" (3:15:15) 
-var numbersForHour = 12; 
+var posMili, posSec, posMin, posHour; // Положения стрелочек
+var timer0, timer1, timer2, timer3; // Таймеры дял стрелочек
+
+var tickDegPerSecond = 6; // глрадусов в одном тике в секунду (360/60 = 6)
+var tickDegPerHour = 30; // (360/12 = 30)
+var secsInOneMinute = 60; var miliSecondsInOneSec = 1000; 
+
+var kostyl = 15; // Пришлось прикрутить костыль, поскольку стрелки в положении rotation(0deg) указывают на красный кружочек "3" (находятся в горизонтальном положении) (3:15:15) 
+var numbersForHour = 12;
 
 var str = ""
 
@@ -21,6 +26,7 @@ var FormatDateTime = function(){
     this.hours=soon.getHours();
     this.minutes=soon.getMinutes();
     this.seconds=soon.getSeconds();
+    this.miliSeconds=soon.getMilliseconds();
 }
 
 var currentDate = new FormatDateTime;
@@ -31,7 +37,7 @@ var Circle = {
     height : circle.offsetHeight
 }
 
-for(var i=1; i<=numbersForHour;i++){
+for(var i=1; i<=numbersForHour;i++){ // создаем кружки дял цифр
    str += "<div></div>"
 }
 
@@ -39,38 +45,49 @@ circle.innerHTML += str;
 allNumbers = circle.querySelectorAll("div");
 
 function start(){
-    posSec=+currentDate.seconds*degPerSecond; 
-    posMin=+currentDate.minutes*degPerSecond+posSec/60; // для более гладкой анимации
-    posHour=+currentDate.hours*30+posMin/12; // Подумать почему 12 !!!
+
+    posMili = +currentDate.miliSeconds;
+    posSec = +currentDate.seconds * tickDegPerSecond + posMili / miliSecondsInOneSec // для более гладкой анимации
+    posMin = +currentDate.minutes * tickDegPerSecond + posSec / secsInOneMinute; 
+    posHour = +currentDate.hours * tickDegPerHour + (posMin / numbersForHour);
+    timer0=setInterval(tick0,10);
     timer1=setInterval(tick1,10);
     timer2=setInterval(tick2,10);
     timer3=setInterval(tick3,10);
 }
 
+function tick0() {  
+    posMili+=3.6; // (360 / 1000 milisec / 10 )
+    clockMiliSeconds.style.transform = "rotate(" + (posMili-250) + "deg)"
+}
+
 function tick1() {
     posSec+=0.06; // (360deg / 60sec / 100)
-    clockSeconds.style.transform = "rotate(" + (posSec-kostyl*degPerSecond) + "deg)"
+    clockSeconds.style.transform = "rotate(" + (posSec-kostyl*tickDegPerSecond) + "deg)"
 }
 
 function tick2() {
     posMin+=0.001; //  (posSec / 60)
-    clockMinutes.style.transform = "rotate(" + (posMin-kostyl*degPerSecond) + "deg)"
+    clockMinutes.style.transform = "rotate(" + (posMin-kostyl*tickDegPerSecond) + "deg)"
 }
 
 function tick3() {  
     posHour+=0.001/12; //  (posMin / 12)
-    clockHours.style.transform = "rotate(" + (posHour-kostyl*6) + "deg)"
+    clockHours.style.transform = "rotate(" + (posHour-kostyl*tickDegPerHour) + "deg)"
 }
 
-    start(); // Часики запускаются здесь!
 
+ 
+clockMiliSeconds = document.getElementById("clockMiliSeconds");
 clockSeconds = document.getElementById("clockSeconds");
 clockMinutes = document.getElementById("clockMinutes");
 clockHours = document.getElementById("clockHours");
 
-clockSeconds.style.transform = "rotate(" + (currentDate.seconds*6-kostyl*degPerSecond) + "deg)" // Положение стрелок по умолчанию (до срабатывания таймера)
-clockMinutes.style.transform = "rotate(" + ((currentDate.minutes*6-kostyl*degPerSecond)+(currentDate.seconds*6)/60) + "deg)" // плавность аницмации
-clockHours.style.transform = "rotate(" + (currentDate.hours*30-kostyl*degPerSecond)+ "deg)" // СДЕЛАТЬ ПОПРАВКУ НА МИНУТЫ И СЕКУНДЫ!!!!!
+var hour = (currentDate.hours*tickDegPerHour-3*tickDegPerHour)+(currentDate.minutes*6)/12 // Данное выражение некоректно работало, пока я сделал его переменной
+
+clockSeconds.style.transform = "rotate(" + (currentDate.seconds*6-kostyl*tickDegPerSecond) + "deg)" // Положение стрелок по умолчанию (до срабатывания таймера)
+clockMinutes.style.transform = "rotate(" + ((currentDate.minutes*6-kostyl*tickDegPerSecond)+(currentDate.seconds*6)/60) + "deg)"
+clockHours.style.transform = "rotate(" + hour+ "deg)"
 
 var left = getElementPos(allNumbers[0]).left; // Переменные для формулы
 var right = getElementPos(allNumbers[0]).top;
@@ -88,4 +105,21 @@ function getElementPos(elem) {
         left: bbox.left+window.pageXOffset,
         top: bbox.top+window.pageYOffset
     };
+}
+
+timeTable = document.getElementById("time");
+
+setInterval(updateTime,10)
+start(); // Часики запускаются здесь!
+
+function updateTime(){
+    var updatedTime = new FormatDateTime
+    timeTable.innerHTML=str0l(updatedTime.hours,2)+" : "+str0l(updatedTime.minutes,2)+" : "+str0l(updatedTime.seconds,2)+" : "+str0l(Math.floor(updatedTime.miliSeconds/10),2);
+}
+
+function str0l(val,len) {
+    var strVal=val.toString();
+    while ( strVal.length < len )
+        strVal='0'+strVal;
+    return strVal;
 }

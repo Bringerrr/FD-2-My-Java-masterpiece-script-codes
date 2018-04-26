@@ -56,6 +56,14 @@
     z-index: 2;
 }
 
+#clockMiliSeconds{
+    display: block;
+    width: 120px;
+    height: 3px;
+    background-color: pink;
+    z-index: 3;
+}
+
 #clockMinutes{
     display: block;
     width: 170px;
@@ -80,4 +88,11 @@
     left: 50%;
     margin-right: -50%;
     transform-origin: 0% 50%;
+}
+
+#time{
+    display: block;
+    border: 1px solid #000;
+    transform: translate(-50%, -50%);
+    top: 105%;
 }
