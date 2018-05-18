@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+
+<body>
+
+    <style>
+
+        /* @keyframes MyAnimation2
+        {
+            0% { background: url('birdDiv.png') 0px 0; }
+            33% { background: url('birdDiv.png') -726.4px 0; }
+            34% { background: url('birdDiv.png') 0px 166px; }
+            66% { background: url('birdDiv.png') -726.4px 166px; }
+            67% { background: url('birdDiv.png') 0px -332px; }
+            100% { background: url('birdDiv.png') -726.4px -332px; }
+        } */
+
+         #bird{
+            border: 1px solid black;
+            width: 60vmin;
+            height: 60vh;
+            background-image: url("bird.png");
+            background-size: 500%;
+            /* animation: MyAnimation2 1s steps(4) infinite; */
+            /* background: url(); */
+        }
+
+           .pos1{
+            position: relative;
+            background-position-x: 74.2%;
+            background-position-Y: -1.25%;
+        }
+
+        .pos2{
+            background-position-x: 49.35%;
+            background-position-Y: 90%;
+        }
+
+        /* #bird{
+            border: 1px solid black;
+            width: 183.6px;
+            height: 164.6px;
+            background-image: url("birdDiv.png");
+            animation: MyAnimation2 1s steps(4) infinite;
+        } */
+
+    
+    </style>
+
+  
+<div id="bird" class="pos1">
+</div>
+
+<div id="bird" class="pos2">
+    </div>
+
+<div id="bird">
+    </div>
+
+<div id="bird">
+    </div>
+
+    <script>
+
+        var birdDiv = document.getElementById("bird");
+        var bird2 = document.getElementsByClassName("pos2")[0];
+
+        var birdFrames = [];
+        var birdFrameNow = 0;
+
+        var birdFrameParams = {
+            0:[-0.3,0], 1:[24.65,0], 2:[49.5,-0.4], 3:[74.2,-1.25], 4:[99,-1.95],
+            5:[-0.3,42.65], 6:[24.59,42.65], 7:[49.4,42.65], 8:[74.3,42.75], 9:[99.1,42.65],
+            10:[-0.3,89.2], 11:[24.65,90.1], 12:[49.35,90],13:[74.3,90]
+        }
+
+        var frame = 0;
+
+        requestAnimationFrame(tick1)
+
+        function tick1(){
+
+            frame ++;
+            if(frame%1==0){
+                console.log(birdFrameNow)
+                birdDiv.style.backgroundPositionX = birdFrameParams[birdFrameNow][0] +"%"
+                birdDiv.style.backgroundPositionY = birdFrameParams[birdFrameNow][1] +"%"
+
+                if(birdFrameNow == 13){
+                    birdFrameNow = 0
+                }
+
+                else{
+                    birdFrameNow ++;
+                }
+            }
+
+             requestAnimationFrame(tick1)
+    }
+
+        // birdDiv.style.backgroundPositionX = "100%"
+        // bird2.style.backgroundPositionX = "25%"
+        // bird3.style.backgroundPositionX = "25%"
+        // bird4.style.backgroundPositionX = "25%"
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="styles.css">
+    <script src="mainField.js"></script>
+    <script src="ui.js"></script>
+    <script src="bird.js"></script>
+    <script src="pipe.js"></script>
+    <script src="score.js"></script>
+    <script src="bg.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="mainField">
+        <div id="UI" class="mainField_UI">
+            <h3 id="playerName"></h3>
+            <button id="startButton">Начать игру</button>
+            <button id="recordButton">Таблица рекордов</button>
+            <button id="settingButton">Настройки</button>
+        </div>
+
+        <div id="UIDifficulty" class="mainField_UI">
+            <h3>Выберете сложность</h3>
+            <button id="ezDiffButt">Легко</button>
+            <!-- <button id="normDiffButt">Средне</button> -->
+            <button id="hardDiffButt">Тяжело</button>
+
+            <button id="backButtonDiff">Назад</button>
+        </div>
+
+        <div id="UIRestart" class="mainField_UI">
+            <button id="restartButton">Переиграть</button>
+            <button id="recordButtonRestart">Таблица рекордов</button>
+        </div>
+
+        <div id="UISetting" class="mainField_UI">
+            <h3 id="playerName"></h3>
+            <button id="settingBackButt">Назад</button>
+        </div>
+
+        <div id="UIPlayerName" class="mainField_UI">
+            <label for="name">Имя:</label>
+            <input id="nameInput" type="text"  name="name" placeholder="Введите ваше имя" required />
+            <button id="acceptName">ОК</button>
+        </div>
+
+        <div id="UIRecords" class="mainField_UI">
+            <div>
+                <h3>Таблица Рекордов</h3>
+            </div>
+            <button id="backButton">Назад</button>
+        </div>
+        <div id="fps">0</div>
+    </div>
+
+ 
+
+    <script>
+
+        "use sctrict"
+
+        var RAF =
+            // находим, какой метод доступен
+            window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            // ни один не доступен
+            // будем работать просто по таймеру
+            function (callback) { window.setTimeout(callback, 1000 / 60); };
+
+
+        // FPS тест
+        var fps = {
+            lastAnimationFrameTime: 0,
+            fpsElement: document.getElementById('fps'),
+            animate: function (now) {
+                fps.calculateFps(now);
+                RAF(fps.animate)
+            },
+            calculateFps: function (now) {
+                var fps = 1000 / (now - this.lastAnimationFrameTime);
+                this.lastAnimationFrameTime = now;
+                this.fpsElement.innerHTML = fps.toFixed(0) + ' fps';
+            },
+            start: function () {
+                RAF(fps.animate);
+            }
+        };
+
+        fps.start();
+
+        var mainField = document.getElementById("mainField");
+
+        var mainFieldNew = new Field();
+
+        mainFieldNew.update(mainField);
+        
+        var birdDiv = mainField.getElementsByClassName("bird");
+        var pipeDiv = mainField.getElementsByClassName("pipe");
+        var pipeDivBot = mainField.getElementsByClassName("pipeBot");
+        var scoreDiv = mainField.getElementsByClassName("score")
+
+        var nameInput = document.getElementById("nameInput")
+        var playerNameHeading = document.getElementById("playerName")
+        var recordButt = document.getElementById("recordButton")
+        var backButton =document.getElementById("backButton")
+        var settingButt = document.getElementById("settingButton")
+        var settingBackButt = document.getElementById("settingBackButt")
+
+        var ezDiffButt = document.getElementById("ezDiffButt")
+        var normDiffButt = document.getElementById("normDiffButt")
+        var hardDiffButt = document.getElementById("hardDiffButt")
+        var backButtonDiff = document.getElementById("backButtonDiff");
+        var recordButtonRestart = document.getElementById("recordButtonRestart")
+
+        var bgDiv = mainField.getElementsByClassName("bgg");
+
+        var startButton = document.getElementById("startButton");
+        var restartButton = document.getElementById("restartButton");
+        var acceptName = document.getElementById("acceptName");
+
+        var ui = document.getElementById("UI")
+        var uiSetting = document.getElementById("UISetting")
+        var uiRestart = document.getElementById("UIRestart")
+        var uiPlayerName = document.getElementById("UIPlayerName")
+        var uiRecords = document.getElementById("UIRecords")
+        var uiDiff = document.getElementById("UIDifficulty")
+
+        // var transPerTick = 120;
+
+        var currentPlayerName = "" 
+
+        var frame = 0;
+
+        var birdFrameNow = 0;
+        var birdFrameParams = {
+            0:[-0.3,0], 1:[24.65,0], 2:[49.5,-0.4], 3:[74.2,-1.25], 4:[99,-1.95],
+            5:[-0.3,42.65], 6:[24.59,42.65], 7:[49.4,42.65], 8:[74.3,42.75], 9:[99.1,42.65],
+            10:[-0.3,89.2], 11:[24.65,90.1], 12:[49.35,90],13:[74.3,90]
+        }
+
+        var recordBorder = [1,2,3,5,6,7,8,9,20,44,9]
+
+        var pipes = [];
+        var bgArr = [];
+
+        var height = mainField.offsetHeight
+        var width = mainField.offsetWidth
+        var vMin = mainFieldNew.vMin();
+
+        var pipenew = new Pipe();
+        var bird = new Bird();
+        var bgNew = new Bg();
+        var score = new Score();
+
+
+        var uiNew = new UI();
+        var newNewUi = new UI();
+        var uiPlayer = new UI();
+        var uiRecordBoard = new UI();
+        var uiSettingsNew = new UI();
+        var uiDiffBoard = new UI();
+
+        var uiAnimSpeed = (130+50)/60;
+        var gameIsStarted = false;
+
+        // RAF(gameMenuPlayerName);
+
+        (function setupUI(){
+            uiNew.setCurrentObj(ui);
+            uiDiffBoard.setCurrentObj(uiDiff);
+            uiSettingsNew.setCurrentObj(uiSetting);
+            uiPlayer.setCurrentObj(uiPlayerName);
+            uiRecordBoard.setCurrentObj(uiRecords);
+            newNewUi.setCurrentObj(uiRestart); // Restart !!!!
+
+            recordButt.addEventListener("click",showRecordBoard,false);
+            settingButt.addEventListener("click",showSettingMenu,false);
+
+            startButton.addEventListener("click",gameMenuSetDifficulty,false);
+            backButtonDiff.addEventListener("click",goBackToMenuDiff,false);
+            backButton.addEventListener("click",goBackToMenuRec,false);
+            acceptName.addEventListener("click",acceptPlayerName,false);
+            restartButton.addEventListener("click",gameRestart,false);
+
+            ezDiffButt.addEventListener("click",startEzGame,false);
+            hardDiffButt.addEventListener("click",startHardGame,false);
+
+            settingBackButt.addEventListener("click",goBackToMenuSet,false)
+
+            recordButtonRestart.addEventListener("click",showRecordBoardRestart,false)
+                
+        })();
+
+        (function startMainMenu(){
+            uiNew.goTo(-50, (130+50)/60 );
+        })();
+
+      
+        RAF(gameMainMenuUI)
+
+        function gameMenuSetDifficulty(){
+            uiNew.goTo(-230, uiAnimSpeed);
+            uiDiffBoard.goTo(-50, uiAnimSpeed);
+        }
+
+        function goBackToMenuDiff(){
+            uiNew.goTo(-50, uiAnimSpeed);
+            uiDiffBoard.goTo(130, uiAnimSpeed)
+        }
+
+        function showSettingMenu(){
+            uiNew.goTo(-230, uiAnimSpeed);
+            uiSettingsNew.goTo(-50, uiAnimSpeed);
+        }
+
+        function goBackToMenuRec(){
+            uiNew.goTo(-50, uiAnimSpeed);
+            uiRecordBoard.goTo(130, uiAnimSpeed)
+        }
+
+         function goBackToMenuSet(){
+            uiNew.goTo(-50, uiAnimSpeed);
+            uiSettingsNew.goTo(130, uiAnimSpeed)
+        }
+
+        function showRecordBoard(){
+            uiNew.goTo(-230, uiAnimSpeed);
+            uiRecordBoard.goTo(-50, uiAnimSpeed)
+        }
+
+        function showRecordBoardRestart(){ // СДЕЛАТЬ КНОПКУ РЕСТАРТА РЕКОРДОВ
+            newNewUi.goTo(130, uiAnimSpeed);
+            uiRecordBoard.goTo(-50, uiAnimSpeed);
+        }
+
+        function acceptPlayerName(){
+            currentPlayerName = nameInput.value;
+            playerNameHeading.innerHTML = "Добро пожаловвать, "+ currentPlayerName;
+            RAF(gameMenu);
+        }
+
+        function gameMenuRestart(){
+            newNewUi.goTo(-50, uiAnimSpeed);
+        }
+
+        function startEzGame(){
+            // uiDiffBoard.goTo(-230, uiAnimSpeed);
+            uiDiffBoard.currentObj.style.display="none"; // Временно
+            gameStart();
+            
+        }
+
+        function startHardGame(){
+            uiDiffBoard.currentObj.style.display="none";
+            gameStart();
+        }
+
+        function gameMainMenuUI(){
+
+            uiNew.update();
+            newNewUi.update(); // рестарт
+            uiDiffBoard.update();
+            uiSettingsNew.update();
+            uiPlayer.update();
+            uiRecordBoard.update();
+
+            if(gameIsStarted === false ){
+            RAF(gameMainMenuUI)}
+        }
+        
+        function gameStart(){ // СТАРТ ИГРЫ
+
+            console.log(bgNew)
+
+            pipenew = new Pipe();
+
+            mainField.appendChild(pipenew.createDiv('pipe'));
+            mainField.appendChild(pipenew.createDivBot('pipeBot'));
+            mainField.appendChild(bird.createBird('bird'));
+            mainField.appendChild(bgNew.createImg("bgg"));
+            mainField.appendChild(score.createDiv("score"));
+
+            var ostatokForBg;
+
+            bgDiv[0].onload = function(){
+                ostatokForBg = bgDiv[0].naturalWidth;
+                // return ostatokForBg;
+        }
+
+            console.log(ostatokForBg)
+
+                score.tick =3/60;
+                bgNew.setPositionX(0);
+                // uiNew.setCurrentObj(ui);
+                pipes.push(pipenew);
+                bgArr.push(bgNew);
+
+                pipenew.update();
+                bird.update();
+                bgNew.update();
+            
+                addEventListener("keypress", keyPressed, false);
+                startButton.removeEventListener("click",gameStart,false);
+
+                gameIsStarted = true;
+
+                RAF(game);
+            }
+
+        // gameStart();
+
+        function game() {
+
+            frame++;
+
+            document.getElementsByClassName("score")[0].innerHTML = Math.floor(score.total);
+            score.update();
+            
+            bird.update();
+            birdDiv[0].style.top = bird.y + "px";
+
+            if(frame%4==0){
+                // console.log(birdFrameNow)
+
+                birdDiv[0].style.backgroundPositionX = birdFrameParams[birdFrameNow][0] +"%"
+                birdDiv[0].style.backgroundPositionY = birdFrameParams[birdFrameNow][1] +"%"
+
+                if(birdFrameNow == 13){
+                    birdFrameNow = 0
+                }
+
+                else{
+                    birdFrameNow ++;
+                }
+            }
+           
+            // if(uiNew.currentPos<=-50){
+            //     console.log(uiNew.speed)
+            //     uiNew.CurrentObj = -50;
+            //     uiNew.speed = 0;
+            //     startButton.addEventListener("click",gameStart,false);
+            // }
+
+            uiNew.update();
+
+            for (var i = bgArr.length - 1; i >= 0; i--) {
+
+                bgArr[i].update();
+
+                bgDiv[i].style.left = bgArr[i].x +"px"
+
+                if (bgArr[0].x <= - bgArr[0].w) { // убираем фоновый див
+                    bgArr.splice(i, 1)
+                    mainField.removeChild(bgDiv[0]);
+                }
+            }
+
+            if (bgArr[0].x <= 0 && bgArr.length<=1) { // добавляем фоновый див
+                bgArr.push(new Bg());
+                bgNew.speed = vMin/280;
+                mainField.appendChild(bgArr[bgArr.length - 1].createImg("bgg"));
+                console.log("Created")
+            }
+
+
+            for (var i = pipes.length - 1; i >= 0; i--) {
+
+                pipes[i].update();
+
+                pipeDiv[i].style.left = pipes[i].x + "px"; // animation 
+                pipeDivBot[i].style.left = pipes[i].x + "px";
+
+                if (pipes[i].hits(bird)) {
+
+                    score.tick = 0;
+                    score.update();
+                    frame = 0;                    
+
+                    removeEventListener("keypress", keyPressed, false);
+    
+                    for (var j = 0; j <= pipes.length - 1; j++) {
+                        pipes[j].speed = 0
+                        bird.velocity = 0;
+                        bird.gravity = 0;
+                    }
+
+                    for (var j = 0; j <= bgArr.length - 1; j++) {
+                        bgArr[j].speed = 0
+                    }
+                    // RAF(gameMenuRestart);
+                    // i = -1
+                }
+
+                if (pipes[0].x <= - pipes[0].w) { // убираем пару труб
+                    pipes.splice(i, 1)
+                    mainField.removeChild(pipeDiv[0]);
+                    mainField.removeChild(pipeDivBot[0]);
+                }
+            }
+
+            if (frame % 120 == 0 && pipes[0].speed>0) { // создаем 1 пару труб каждые 120 кадров
+                pipes.push(new Pipe());
+                mainField.appendChild(pipes[pipes.length - 1].createDivBot('pipeBot'));
+                mainField.appendChild(pipes[pipes.length - 1].createDiv('pipe'));
+            }
+
+            (function gameProcess(){
+                // var gameContinue = true;
+                for (var i = pipes.length - 1; i >= 0; i--){
+                    if (pipes[i].highlight===true){
+                        gameIsStarted = false;
+                    }
+                }
+                if(gameIsStarted === false)  {
+                    RAF(gameMainMenuUI);
+                    gameMenuRestart();
+                }
+                if(gameIsStarted === true)   {RAF(game);}
+            })();
+        } 
+
+        window.addEventListener("resize",function(){
+            mainField.style.width= document.documentElement.clientWidth+"px";
+            mainField.style.height= document.documentElement.clientHeight+"px";
+        })
+
+        // gameStart(); // СТАРТ ИГРЫ
+
+        function keyPressed(EO) {
+            EO = EO || window.event;
+            if (kCode = "53") {
+                bird.up();
+            }
+        }
+
+        function randomDiap(n, m) {
+            return Math.floor(Math.random() * ( m - n + 1)) + n;
+        }
+        
+        function gameRestart(){
+
+            uiRestart.style.transition = "0.1s"
+            newNewUi.currentPos = newNewUi.currentPosMax
+
+            score.tick =3/60;
+            score.total = 0;
+
+            var pipeArrayLength = pipeDiv.length;
+            var bgArrayLength = bgArr.length;
+
+                for (var i = 0; i < pipeArrayLength; i++){
+                    mainField.removeChild(pipeDiv[0]);
+                    mainField.removeChild(pipeDivBot[0]);
+                }
+
+                for (var i = 0; i < bgArrayLength; i++){
+                    mainField.removeChild(bgDiv[0]);
+                }
+
+                mainField.removeChild(scoreDiv[0]); 
+
+            mainField.removeChild(birdDiv[0])
+
+            console.log(pipeDiv.length)
+
+            pipenew = new Pipe();
+            bird = new Bird();
+
+            pipes = [];
+            bgArr = [];
+
+            // mainField.appendChild(pipenew.createDiv('pipe'));
+            // mainField.appendChild(pipenew.createDivBot('pipeBot'));
+            // mainField.appendChild(bird.createBird('bird'));
+            // mainField.appendChild(bgNew.createImg("bgg"));
+            // mainField.appendChild(score.createDiv("score"));
+
+            gameStart();
+            // restartButton.removeEventListener("click",gameRestart,false);
+        }
+
+
+    </script>
+</body>
+
+</html>
