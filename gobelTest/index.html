@@ -7,8 +7,9 @@
     function ManModel() {
         this.w = 100;
         this.h = 100;
-        this.posX = 200;
-        this.posY = 200;
+        this.posX = 100;
+        this.posY = 100;
+        this.side = "down"
 
         var myView = null;
 
@@ -21,20 +22,30 @@
                 myView.update();
         };
 
-        this.shift=function(x,y) {
+        this.shift=function(x,y,side) {
             console.log(x)
             console.log(y)
 
-            if((this.posY+y)<=0){
-                this.posY=0
-                this.posX+=x
+            if((this.posY)<=0 && y==(-100) ){
+                y=0
             }
 
-            else {
+            if((this.posY+this.h)>=700 && y==(100) ){
+                y=0
+            }
+            if((this.posX+this.w)>=700 && x==(100) ){
+                x=0
+            }
+            if((this.posX)<=0 && x==(-100) ){
+                x=0
+            }           
+
                 this.posX+=x;
                 this.posY+=y;
-            }
+
+
             console.log({y:this.posY,x:this.posX})
+            this.side=side;
             this.updateView();
         };
 
@@ -54,10 +65,25 @@
         }
 
         this.update=function() {
+            console.log(myModel.side)
             manDiv.style.width=myModel.w+"px";
             manDiv.style.height=myModel.h+"px";
             manDiv.style.left=myModel.posX+"px";
             manDiv.style.top=myModel.posY+"px";
+
+            if(myModel.side=="down"){
+                manDiv.style.transform = "rotate(180deg)";
+            }
+            if(myModel.side=="up"){
+                manDiv.style.transform = "rotate(0deg)";
+            }
+            if(myModel.side=="right"){
+                manDiv.style.transform = "rotate(90deg)";
+            }
+            if(myModel.side=="left"){
+                manDiv.style.transform = "rotate(270deg)";
+            }
+            
         }
 
     };
@@ -71,7 +97,7 @@
         this.start=function(model,field) {
             myModel=model;
             myField=field;
-            addEventListener('keypress',this.shiftMovement,false); 
+            document.addEventListener('keydown',this.shiftMovement,false); 
         }
 
 
@@ -79,22 +105,17 @@
             EO = EO || window.event;
             EO.preventDefault();
             var kCode = EO.keyCode;
-            // клавиша 5 
-            if (kCode === 56) {
-                console.log("ВВЕРХ")
-                myModel.shift(0,-100);
+            if (kCode === 38) {
+                myModel.shift(0,-100,"up");
             } 
-            if (kCode === 54) {
-                console.log("ВЛЕВО")
-                myModel.shift(100,0);
+            if (kCode === 39) {
+                myModel.shift(100,0,"right");
             } 
-            if (kCode === 52) {
-                console.log("ВПРАВО")
-                myModel.shift(-100,0);
+            if (kCode === 37) {
+                myModel.shift(-100,0,"left");
             } 
-            if (kCode === 50) {
-                console.log("ВНИЗ")
-                myModel.shift(0,100);
+            if (kCode === 40) {
+                myModel.shift(0,100,"down");
             } 
         }
 
@@ -105,8 +126,7 @@
 <div id='IManContainer'>
     <div style='position: relative; width: 700px; height: 700px;
         border: solid red 1px'>
-        <div class='SMan' style='position: absolute;
-            background-color: green'></div>
+        <div class='SMan' style='position: absolute; transform-origin: 50% 50%; background-image:url("arrow.jpg");'></div>
     </div>
 </div>
 
