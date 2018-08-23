@@ -1,0 +1,125 @@
+<script>
+
+    "use strict";
+
+    // model
+
+    function ManModel() {
+        this.w = 100;
+        this.h = 100;
+        this.posX = 200;
+        this.posY = 200;
+
+        var myView = null;
+
+        this.start=function(view) {
+            myView=view;
+        }
+
+        this.updateView=function() {
+            if ( myView )
+                myView.update();
+        };
+
+        this.shift=function(x,y) {
+            console.log(x)
+            console.log(y)
+
+            if((this.posY+y)<=0){
+                this.posY=0
+                this.posX+=x
+            }
+
+            else {
+                this.posX+=x;
+                this.posY+=y;
+            }
+            console.log({y:this.posY,x:this.posX})
+            this.updateView();
+        };
+
+    };
+
+    // view
+
+    function ManViewWebPage() {
+        var myModel = null;
+        var myField = null;
+        var manDiv = null;
+
+        this.start=function(model,field) {
+            myModel=model;
+            myField=field;
+            manDiv=myField.querySelector('.SMan');
+        }
+
+        this.update=function() {
+            manDiv.style.width=myModel.w+"px";
+            manDiv.style.height=myModel.h+"px";
+            manDiv.style.left=myModel.posX+"px";
+            manDiv.style.top=myModel.posY+"px";
+        }
+
+    };
+
+    // controller
+
+    function ManControllerButtons() {
+        var myModel = null; 
+        var myField = null; 
+
+        this.start=function(model,field) {
+            myModel=model;
+            myField=field;
+            addEventListener('keypress',this.shiftMovement,false); 
+        }
+
+
+        this.shiftMovement=function(EO) {
+            EO = EO || window.event;
+            EO.preventDefault();
+            var kCode = EO.keyCode;
+            // клавиша 5 
+            if (kCode === 56) {
+                console.log("ВВЕРХ")
+                myModel.shift(0,-100);
+            } 
+            if (kCode === 54) {
+                console.log("ВЛЕВО")
+                myModel.shift(100,0);
+            } 
+            if (kCode === 52) {
+                console.log("ВПРАВО")
+                myModel.shift(-100,0);
+            } 
+            if (kCode === 50) {
+                console.log("ВНИЗ")
+                myModel.shift(0,100);
+            } 
+        }
+
+    }
+
+</script>
+<h3>Используйте NumLock стрелки</h3>
+<div id='IManContainer'>
+    <div style='position: relative; width: 700px; height: 700px;
+        border: solid red 1px'>
+        <div class='SMan' style='position: absolute;
+            background-color: green'></div>
+    </div>
+</div>
+
+<script>
+    var man=new ManModel();
+    var view=new ManViewWebPage();
+    var controller=new ManControllerButtons();
+    var containerElem=document.getElementById('IManContainer');
+
+    
+    man.start(view);
+    view.start(man,containerElem);
+    controller.start(man,containerElem);
+    man.updateView();
+
+</script>
