@@ -56,8 +56,6 @@ function Map(){
                         int = e.latitude;
                         obj = e;
                     }
-
-                    console.log(int)
                 })
                 return obj.city
                 break;
@@ -71,8 +69,6 @@ function Map(){
                         int = e.longitudes;
                         obj = e;
                     }
-
-                    console.log(int)
                 })
                 return obj.city
                 break;
@@ -86,8 +82,6 @@ function Map(){
                         int = e.latitude;
                         obj = e;
                     }
-
-                    console.log(int)
                 })
                 return obj.city
                 break;
@@ -101,8 +95,6 @@ function Map(){
                         int = e.longitudes;
                         obj = e;
                     }
-
-                    console.log(int)
                 })
                 return obj.city
                 break;
