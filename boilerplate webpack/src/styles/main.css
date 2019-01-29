@@ -1,0 +1,124 @@
+@keyframes example {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body > * {
+  overflow: hidden;
+}
+
+.button__start {
+  display: inline-block;
+}
+
+.button {
+  min-width: 200px;
+  padding: 20px;
+}
+
+.mainContainer {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  background-color: grey;
+  max-height: 900px;
+  position: relative;
+}
+
+.mainContainer > .atmContainer {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  background-color: grey;
+  min-height: 200px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.mainContainer > .atmContainer > .spinner {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  animation: example 1.3s ease-out infinite;
+  background-image: url('../img/spinner.png');
+}
+
+.mainContainer > .atmContainer > .atm {
+  display: flex;
+  width: 17%;
+  min-height: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: green;
+  border: 2px solid black;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+.mainContainer > .atmContainer > .atm > * {
+  width: 100%;
+  text-align: center;
+  padding: 3px;
+}
+.mainContainer > .atmContainer > .atm > .atmCounter {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 6px;
+  background-color: #fff;
+}
+
+.mainContainer > .atmContainer > .atm > .clientAtAtm {
+  width: 50%;
+  background-color: transparent;
+  height: 60px;
+}
+
+.queue {
+  width: 10%;
+  min-height: 600px;
+}
+
+.queue > .queueContainer {
+  width: 100%;
+  position: relative;
+}
+
+.queue > #queueContainer > div {
+  height: 60px;
+  margin-bottom: 20px;
+  background-color: black;
+}
+
+.mainContainer > .queue_controller {
+  width: 250px;
+  position: absolute;
+  height: 40px;
+  top: 0;
+  text-align: center;
+}
+
+#formContainer {
+  margin: 20px 0;
+}
+
+#formContainer > * {
+  font-size: 18px;
+  padding: 5px;
+  margin: 5px;
+}
+
+#formContainer > span {
+  color: red;
+}
